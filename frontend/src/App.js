@@ -6,6 +6,7 @@ import Basic from "./routes/Basic";
 import Free from "./routes/Free";
 import Solo from "./routes/Solo";
 import Duet from "./routes/Duet";
+import GroupCall from "./routes/GroupCall";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/free" element={<Free />}></Route>
           <Route path="/solo" element={<Solo />}></Route>
           <Route path="/duet" element={<Duet />}></Route>
+          <Route path="/groupcall" element={<GroupCall />}></Route>
         </Routes>
       </BrowserRouter>
     </div>
