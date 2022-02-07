@@ -1,22 +1,7 @@
-import {React, useState} from 'react';
+import {React} from 'react';
+import styles from "../components/roomin/Room.module.css";
+import Screen from "../components/roomin/Screen";
 import kurentoUtils from 'kurento-utils'
-
-/*
- * (C) Copyright 2014 Kurento (http://kurento.org/)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
 
 const PARTICIPANT_MAIN_CLASS = 'participant main';
 const PARTICIPANT_CLASS = 'participant';
@@ -116,6 +101,7 @@ ws.onopen = () => {
 };
 var participants = {};
 var name;
+var room;
 
 window.onbeforeunload = function() {
     ws.close();
@@ -135,7 +121,7 @@ ws.onmessage = function(message) {
         case 'participantLeft':
             onParticipantLeft(parsedMessage);
             break;
-            case 'receiveChat': //채팅을 받았습니다!
+        case 'receiveChat': //채팅을 받았습니다!
             onReceiveChat(parsedMessage);
             break;
         case 'receiveYTUrl': //야 이거 당장 틀어야 함
@@ -168,19 +154,21 @@ function onReceiveChat(sender){
 //채팅 보낼 때
 function sendChat(){
     var chatMsg = document.getElementById('input_chat').value;
-    var room = document.getElementById('room-header').value;
     var message = {
         id : 'sendChat',
         name : name,    //내 이름 
         room : room,    //현재 룸
         msg: chatMsg,
     }
-    console.log(`[sendChat] ${name}: ${message}`);
+    console.log(`[sendChat] ${name}: ${chatMsg} at room ${room}`);
     sendMessage(message);
 }
 //유튜브 url 수신했을 경우(공용)
 function onReceiveYTUrl(request){
     console.log(`${request.room}에 ${request.url} 재생 요청 들어옴 -> YT플레이어로 당장 틀기`);
+    YTUrl = request.url;
+    //목표: Screen의 react-player에서 YTUrl을 재생해야 함 
+    //재생하는 코드가 이 자리에 있어야 함 
 }
 //유튜브 url 발신하는 경우(방장만, 현재 유튜브 재생 끝났을 때)
 function sendYTUrl(){
@@ -189,13 +177,12 @@ function sendYTUrl(){
         //뮤직바 처음에 있는 곡을 시그널링에 보내고 
         //예약목록에서 지우는 거 여기서 하나? 여기서 해야하나? 일단 지움
     var YTUrl = "https://youtu.be/D5Y11hwjMNs"; //여기에 다음 곡 song_no로 검색해서 url 끌어와야함
-    var room = document.getElementById('room-header').value;
     var message = {
         id: 'sendYTUrl',
         room: room,
         url: YTUrl,
     }
-    console.log("[sendYTUrl]유튜브 요청 보냄");
+    console.log(`[sendYTUrl]유튜브 요청 보냄, url: ${YTUrl} at room ${room}`);
     sendMessage(message);
 }
 
@@ -307,12 +294,12 @@ function sendMessage(message) {
     ws.send(jsonMessage);
 }
 
-
+var YTUrl="";
 
 const GroupCall = () =>{
     function register() {
         name = document.getElementById('name').value;
-        var room = document.getElementById('roomName').value;
+        room = document.getElementById('roomName').value;
         
         document.getElementById('room-header').innerText = 'ROOM ' + room;
         document.getElementById('participants').innerText = '내 이름은 ' + name;
@@ -347,6 +334,7 @@ const GroupCall = () =>{
                 <div id="participants"></div>
 
                 {/*채팅, 링크 관련*/}
+                <Screen mode={styles.ScreenBasic}/>
                 <input type="text" id="input_chat" placeholder={"전송할 메세지를 입력하세요"}></input>
                 <input type="button" id="button-leave" onClick={sendChat}
                     defaultValue={"채팅 전송"}/>
