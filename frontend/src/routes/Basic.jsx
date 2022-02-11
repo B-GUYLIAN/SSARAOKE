@@ -7,12 +7,13 @@ import Button from "../components/roomin/Button";
 import MirrorBall from "../components/roomin/MirrorBall";
 import LightRope from "../components/roomin/LightRope";
 import ChangeMode from "../components/roomin/ChangeMode";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Crazylights from "../components/roomin/Crazylights";
 import { Link } from "react-router-dom";
 import Controller from "../components/remote/Controller";
 import kurentoUtils from "kurento-utils";
 import { connect } from "react-redux";
+import axios from "axios";
 
 var participants = {};
 function Participant(name, sendMessage) {
@@ -221,6 +222,23 @@ function Basic({ Nickname }) {
       participants[key].dispose();
     }
     ws.close();
+
+    var room_seq = 379;
+    // DB 상으로도 나가기(Authorization 바꾸기)
+    axios
+      .get(`https://i6a306.p.ssafy.io:8080/api/v1/room/out/${room_seq}`,
+        {
+          headers: {
+            "Content-Type": 'application/json',
+            Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwiaXNzIjoic3NhcmFva2UiLCJleHAiOjE2NDU2MDAyMDIsImlhdCI6MTY0NDMwNDIwMn0.bAx6gwfL1Ej3u-J-Bb8Tmqf5_Eiw1UsHajGHHKPb41sxtns0Ri55jKkWvzMm9D2UJfB2dYkZGtmc0EOaEGYqWA",
+          },
+        })
+      .then((res) => {
+        console.log("out 성공", res);
+      })
+      .catch((res) => {
+        console.log("out 실패",res);
+      })
   }
 
   function receiveVideo(sender) {
@@ -273,7 +291,7 @@ function Basic({ Nickname }) {
     var message = {
       id: "joinRoom",
       name: { Nickname }.Nickname,
-      room: "1",
+      room: "2",
     };
     sendMessage(message);
   }
