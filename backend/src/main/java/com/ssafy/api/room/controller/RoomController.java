@@ -60,7 +60,7 @@ public class RoomController {
     }
 
     @GetMapping("/disappear/{room_seq}")
-    ResponseEntity<RoomUserResponse> dissapear(@PathVariable("room_seq") Long room_seq) {
+    ResponseEntity<RoomUserResponse> disappear(@PathVariable("room_seq") Long room_seq) {
         RoomUserResponse response = roomService.disappear(room_seq);
         return ResponseEntity.ok().body(response);
     }
