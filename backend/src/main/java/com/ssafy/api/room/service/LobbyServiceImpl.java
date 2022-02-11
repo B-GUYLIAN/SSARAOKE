@@ -48,9 +48,10 @@ public class LobbyServiceImpl implements LobbyService {
     @Transactional
     public Room createRoom(User user, LobbyCreateRequest lobbyCreateRequest) {
         // 더 이상 방을 생성할 수 없을 경우(30개) -> Error
-        if(getRoomCount()>=30) {
+        /*
+	if(getRoomCount()>=30) {
             throw new CustomException(ErrorCode.LIMITED_ROOM);
-        }
+        }*/
         Room room = Room.builder()
                 .title(lobbyCreateRequest.getTitle())
                 .is_private(lobbyCreateRequest.isPrivate())

@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -79,7 +81,8 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     @Override
     public void out(User user, Long room_seq) {
-        Room room = roomRepository.findById(room_seq)
+   	log.error("[out]room_seq : {}", room_seq);
+       	    Room room = roomRepository.findById(room_seq)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         room.removeUser(user.getSeq());
     }
