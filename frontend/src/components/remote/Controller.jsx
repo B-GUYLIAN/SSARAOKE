@@ -10,9 +10,10 @@ import Styles from "./remote.module.css";
 import styles2 from "../roomin/Room.module.css"
 
 
-function Controller({book, sendYTUrl}) {
+function Controller({book, sendYTUrl, startDisable}) {
     const [show, setShow] = useState(false);
     const [booklist, setbookList] =useState(book);
+    const [disable, setDisable] = useState(startDisable);
     const startbookList = () => {
         // var YTUrl = booklist[0]; 
         // var message = {
@@ -28,7 +29,12 @@ function Controller({book, sendYTUrl}) {
         // console.log(booklist)
         // console.log(`[sendYTUrl]유튜브 요청 보냄, url: ${YTUrl} at room ${room}`);
         // sendMessage(message);
-        }
+    }
+
+    const stopbookList=()=>{
+        console.log("모두에게 노래 취소 요청");
+        sendYTUrl("");
+    }
         
     
 
@@ -76,8 +82,8 @@ function Controller({book, sendYTUrl}) {
                                 <div>
                                     {/* 북마크 목록 */}
                                     <button className={Styles.bookmarklist}>BookMark</button>
-                                    <button className={Styles.songstart} onClick={startbookList}>시작</button>
-                                    <button className={Styles.songdelete}>취소</button>
+                                    <button className={Styles.songstart} onClick={startbookList} disabled={disable}>시작</button>
+                                    <button className={Styles.songdelete} onClick={stopbookList}>취소</button>
                                     {/* 녹화 시작/중지 */}
                                     <Record />
                                     {/* 노래 예약, 삭제, 목록 */}

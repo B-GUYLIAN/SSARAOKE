@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 import Controller from "../components/remote/Controller";
 import kurentoUtils from "kurento-utils";
 import { connect } from "react-redux";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 var participants = {};
 function Participant(name, sendMessage) {
@@ -49,7 +51,7 @@ function Participant(name, sendMessage) {
   this.offerToReceiveVideo = function (error, offerSdp, wp) {
     if (error) return console.error("sdp offer error");
     console.log("Invoking SDP offer callback function");
-    var msg = { id: "receiveVideoFrom", sender: name, sdpOffer: offerSdp };
+    var msg = { id: "receiveVideoFrom", sender: name, name:name, sdpOffer: offerSdp };
     sendMessage(msg);
   };
 
@@ -74,26 +76,31 @@ function Participant(name, sendMessage) {
 }
 
 function Basic({ Nickname }) {
+    
+  const navigate = useNavigate();
+
   const [openChangeMode, setOpenChangeMode] = useState(false);
   const practice = [
-    "https://www.youtube.com/watch?v=Xk7_eEx58ds",
-    "https://www.youtube.com/watch?v=4gXmClk8rKI",
-    "https://www.youtube.com/watch?v=t8KtQ8-nImI",
+    "Xk7_eEx58ds",
+    "4gXmClk8rKI",
+    "t8KtQ8-nImI",
   ];
   const [bookList, setbookList] = useState(practice);
   const [nowPlaymusic, setnowPlaymusic] = useState("");
   // const [participants,setParticipants] = useState({});    //서버에서 보내 줄 현재 참여자 내역
   const [chatArr, setChatArr] = useState([]);
+  const [startDisable, setStartDisable] = useState(false);
 
   const name = { Nickname }.Nickname; //redux에 저장된 user nickname
   const room = "1"; //redux에 저장된 room_seq
 
-  //갈아치워야 할 기존 영역
-
-  var ws = new WebSocket("wss://i6a306.p.ssafy.io:8443/groupcall");
-  ws.onopen = () => {
+  var ws = new WebSocket("wss://i6a306.p.ssafy.io:9999/groupcall");
+  useEffect(() => {
+    console.log('입장확인')
+    ws.onopen = () => {
+    register()
     console.log("WebSocket Client Connected");
-  };
+  }});
 
   window.onbeforeunload = function () {
     ws.close();
@@ -215,12 +222,14 @@ function Basic({ Nickname }) {
   function leaveRoom() {
     sendMessage({
       id: "leaveRoom",
+      name: name,
     });
     console.log(participants);
     for (var key in participants) {
       participants[key].dispose();
     }
     ws.close();
+    navigate("/lobby");
   }
 
   function receiveVideo(sender) {
@@ -309,6 +318,7 @@ function Basic({ Nickname }) {
     var message = {
       id: "sendYTUrl",
       room: room,
+      name: name,
       url: YTUrl, //axios로 받아온 예약리스트 첫번째 걸 setting.
     };
     console.log(`[sendYTUrl]유튜브 요청 보냄, url: ${YTUrl} at room ${room}`);
@@ -319,11 +329,14 @@ function Basic({ Nickname }) {
   }
 
   function onReceiveYTUrl(request) {
+    if(request.url == ""){
+      setStartDisable(false);
+    }else{
+      setStartDisable(true);  
+    }
     //server에서 받아서 setNowPlayMusic
-    console.log(
-      `${request.room}에 ${request.url} 재생 요청 들어옴 -> YT플레이어로 당장 틀기`
-    );
-    var YTUrl = request.url;
+    console.log(`${request.room}에 ${request.url} 재생 요청 들어옴 -> YT플레이어로 당장 틀기`);
+    var YTUrl = "https://www.youtube.com/watch?v=" + request.url;
     setnowPlaymusic(YTUrl);
   }
 
@@ -332,6 +345,7 @@ function Basic({ Nickname }) {
     var message = {
       id: "sendYTUrl",
       room: room,
+      name: name,
       url: YTUrl,
     };
     // console.log(YTUrl)
@@ -359,6 +373,19 @@ function Basic({ Nickname }) {
       participants[name].rtcPeer.videoEnabled = true;
     }
   }
+
+  function basicsinger(){
+    if (document.getElementById(name).className !== styles.basicSingercam) {
+      document.getElementById(name).className=styles.basicSingercam
+  } else {
+      document.getElementById(name).className = "undefined"
+  }
+}
+  
+  function test(){
+  setStartDisable(true);
+  }
+
 
   return (
     <div className={styles.room}>
@@ -389,9 +416,15 @@ function Basic({ Nickname }) {
         />
       </div>
       <div className={styles.ButtonBox}>
+      
         <Button text={"마이크"} getOnClick={audioMute} />
         <Button text={"캠"} getOnClick={videoMute} />
+
         <Controller book={bookList} sendYTUrl={sendYTUrl} />
+
+        <Button text={"Singer"} getOnClick={basicsinger} />
+        <Controller book={bookList} startDisable={true} sendYTUrl={sendYTUrl} />
+
         <Button text={"컨텐츠"} />
         <button
           className={(styles.btn, styles.neon)}
@@ -402,21 +435,24 @@ function Basic({ Nickname }) {
           {" "}
           모드선택{" "}
         </button>
+        <button onClick={test} defaultValue={"취소버튼 비활성화"}></button>
+        
+        {/* <button onClick={sendYTUrl} defaultValue={"유튜브 송신버튼"}></button> */}
         {openChangeMode && <ChangeMode closeChangeMode={setOpenChangeMode} />}
-        <Link to="/lobby" id={styles.btn_no}>
           <button onClick={leaveRoom} className={(styles.btn, styles.neon)}>
             {" "}
             나가기
           </button>
-        </Link>
       </div>
     </div>
   );
 }
 
+
 function mapStateToProps(state) {
   const Nickname = state[0].nickname;
   return { Nickname };
 }
+  
 
 export default connect(mapStateToProps, null)(Basic);
