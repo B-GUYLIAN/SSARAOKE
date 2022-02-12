@@ -98,7 +98,7 @@ function Basic({ Nickname }) {
   useEffect(() => {
     console.log('입장확인')
     ws.onopen = () => {
-    register()
+    register();
     console.log("WebSocket Client Connected");
   }});
 
@@ -335,7 +335,9 @@ function Basic({ Nickname }) {
       setStartDisable(true);  
     }
     //server에서 받아서 setNowPlayMusic
-    console.log(`${request.room}에 ${request.url} 재생 요청 들어옴 -> YT플레이어로 당장 틀기`);
+    console.log(
+      `${request.room}에 ${request.url} 재생 요청 들어옴 -> YT플레이어로 당장 틀기`
+    );
     var YTUrl = "https://www.youtube.com/watch?v=" + request.url;
     setnowPlaymusic(YTUrl);
   }
@@ -389,12 +391,12 @@ function Basic({ Nickname }) {
 
   return (
     <div className={styles.room}>
-      <input
+      {/* <input
         className={styles.testbtn}
         type={"button"}
         onClick={register}
         defaultValue={"1번방입장"}
-      ></input>
+      ></input> */}
 
       <LightRope />
       <Crazylights />
