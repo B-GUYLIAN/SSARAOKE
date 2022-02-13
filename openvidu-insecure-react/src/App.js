@@ -217,11 +217,24 @@ class App extends Component {
 
     audioMute(){
         const me = this.state.publisher;
-        me.publishAudio(false); 
+        if (me.stream.audioActive) {
+          me.publishAudio(false);
+          console.log("마이크 끄기");
+        } else {
+          me.publishAudio(true);
+          console.log("마이크 켜기");
+        }
     }
+    
     videoMute(){
         const me = this.state.publisher;
-        me.publishVideo(false); 
+        if (me.stream.videoActive) {
+          me.publishVideo(false);
+          console.log("비디오 끄기");
+        } else {
+          me.publishVideo(true);
+          console.log("비디오 켜기");
+        }
     }
 
 
