@@ -240,8 +240,16 @@ class App extends Component {
 
     videoFilter() {
         const me = this.state.publisher;
-        
-        me.stream.applyFilter("GStreamerFilter", { command: "audioecho delay=75000000 intensity=0.3 feedback=0.4" });
+        if (!this.state.echo) {
+            this.state.echo = true;
+            me.stream.applyFilter("GStreamerFilter", { command: "audioecho delay=75000000 intensity=0.8 feedback=0.8" });
+            console.log("에코 추가");
+        } else {
+            this.state.echo = false;
+            me.stream.removeFilter()
+            console.log("에코 제거");
+        }
+
     //     me.stream.applyFilter("GStreamerFilter", { command: "videoflip method=vertical-flip" })
     // .then(() => {
     //     console.log("Video rotated!");
