@@ -240,13 +240,16 @@ class App extends Component {
 
     videoFilter() {
         const me = this.state.publisher;
-        me.stream.applyFilter("GStreamerFilter", { command: "videoflip method=vertical-flip" })
-    .then(() => {
-        console.log("Video rotated!");
-    })
-    .catch(error => {
-        console.error(error);
-    });
+        
+        me.stream.applyFilter("GStreamerFilter", { command: "audioecho delay=75000000 intensity=0.3 feedback=0.4" });
+    //     me.stream.applyFilter("GStreamerFilter", { command: "videoflip method=vertical-flip" })
+    // .then(() => {
+    //     console.log("Video rotated!");
+    // })
+    // .catch(error => {
+    //     console.error(error);
+    // });
+                
     // me.stream.removeFilter()
     // .then(() => {
     //     console.log("Filter removed");
@@ -425,7 +428,6 @@ class App extends Component {
         return new Promise((resolve, reject) => {
             axios
                 .post(OPENVIDU_SERVER_URL + "/openvidu/api/sessions/" + sessionId + "/connection", JSON.stringify({
-                    "session": sessionId,
                     "kurentoOptions": {
                       "allowedFilters": ["GStreamerFilter", "FaceOverlayFilter"]
                     }
