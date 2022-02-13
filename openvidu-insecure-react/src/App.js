@@ -34,6 +34,7 @@ class App extends Component {
         this.sendYTUrl = this.sendYTUrl.bind(this);
         this.audioMute = this.audioMute.bind(this);
         this.videoMute = this.videoMute.bind(this);
+        this.videoFilter = this.videoFilter.bind(this);
         
     }
 
@@ -237,6 +238,24 @@ class App extends Component {
         }
     }
 
+    videoFilter() {
+        const me = this.state.publisher;
+        me.stream.applyFilter("GStreamerFilter", { command: "videoflip method=vertical-flip" })
+    .then(() => {
+        console.log("Video rotated!");
+    })
+    .catch(error => {
+        console.error(error);
+    });
+    // me.stream.removeFilter()
+    // .then(() => {
+    //     console.log("Filter removed");
+    // })
+    // .catch(error => {
+    //     console.error(error);
+    // });
+    }
+
 
     leaveSession() {
 
@@ -313,6 +332,7 @@ class App extends Component {
                             <button type='text' defaultValue={'유튜브'} onClick={this.sendYTUrl}>유튭</button>
                             <button type='text' defaultValue={'마이크'} onClick={this.audioMute}>마이크</button>
                             <button type='text' defaultValue={'캠'} onClick={this.videoMute}>캠</button>
+                            <button type='text' defaultValue={'필터 적용'} onClick={this.videoFilter}>필터적용</button>
                         </div>
                         {/*mainStreamManager(화면에 크게 뜨는 애 지워버림) */}
                         {/* {this.state.mainStreamManager !== undefined ? (
@@ -397,10 +417,19 @@ class App extends Component {
     }
 
     createToken(sessionId) {
+        // var data = {
+        //     kurentoOptions: {
+        //         allowedFilters: ['FaceOverlayFilter', 'ChromaFilter', 'GStreamerFilter']
+        //     }
+        // };
         return new Promise((resolve, reject) => {
-            var data = {};
             axios
-                .post(OPENVIDU_SERVER_URL + "/openvidu/api/sessions/" + sessionId + "/connection", data, {
+                .post(OPENVIDU_SERVER_URL + "/openvidu/api/sessions/" + sessionId + "/connection", JSON.stringify({
+                    "session": sessionId,
+                    "kurentoOptions": {
+                      "allowedFilters": ["GStreamerFilter", "FaceOverlayFilter"]
+                    }
+                            }), {
                     headers: {
                         Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
                         'Content-Type': 'application/json',
