@@ -242,7 +242,7 @@ class App extends Component {
         const me = this.state.publisher;
         if (!this.state.echo) {
             this.state.echo = true;
-            me.stream.applyFilter("GStreamerFilter", { command: "audioecho delay=75000000 intensity=0.8 feedback=0.8" });
+            me.stream.applyFilter("GStreamerFilter", { command: "audioecho delay=75000000 intensity=0.5 feedback=0.3" });
             console.log("에코 추가");
         } else {
             this.state.echo = false;
