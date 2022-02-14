@@ -35,6 +35,8 @@ class App extends Component {
         this.audioMute = this.audioMute.bind(this);
         this.videoMute = this.videoMute.bind(this);
         this.voiceFilterEcho = this.voiceFilterEcho.bind(this);
+        this.voiceFilterMegaPhone = this.voiceFilterMegaPhone.bind(this);
+        this.voiceFilterModulation = this.voiceFilterModulation.bind(this);
         
     }
 
@@ -251,6 +253,31 @@ class App extends Component {
         }
     }
 
+    voiceFilterMegaPhone() {
+        const me = this.state.publisher;
+        if (!this.state.echo) {
+            this.state.echo = true;
+            me.stream.applyFilter("GStreamerFilter", { command:  "audioamplify amplification=1.7"});
+            console.log("확성기 추가");
+        } else {
+            this.state.echo = false;
+            me.stream.removeFilter()
+            console.log("확성기 제거");
+        }
+    }
+
+    voiceFilterModulation() {
+        const me = this.state.publisher;
+        if (!this.state.echo) {
+            this.state.echo = true;
+            me.stream.applyFilter("GStreamerFilter", { command: "pitch pitch=1.7"});
+            console.log("음성 변조 추가");
+        } else {
+            this.state.echo = false;
+            me.stream.removeFilter()
+            console.log("음성 변조 제거");
+        }
+    }
 
     leaveSession() {
 
@@ -328,6 +355,8 @@ class App extends Component {
                             <button type='text' defaultValue={'마이크'} onClick={this.audioMute}>마이크</button>
                             <button type='text' defaultValue={'캠'} onClick={this.videoMute}>캠</button>
                             <button type='text' defaultValue={'필터 적용'} onClick={this.voiceFilterEcho}>필터적용</button>
+                            <button type='text' defaultValue={'필터 적용'} onClick={this.voiceFilterMegaPhone}>필터적용</button>
+                            <button type='text' defaultValue={'필터 적용'} onClick={this.voiceFilterModulation}>필터적용</button>
                         </div>
                         {/*mainStreamManager(화면에 크게 뜨는 애 지워버림) */}
                         {/* {this.state.mainStreamManager !== undefined ? (
