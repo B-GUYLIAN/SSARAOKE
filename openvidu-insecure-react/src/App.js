@@ -34,7 +34,7 @@ class App extends Component {
         this.sendYTUrl = this.sendYTUrl.bind(this);
         this.audioMute = this.audioMute.bind(this);
         this.videoMute = this.videoMute.bind(this);
-        this.videoFilter = this.videoFilter.bind(this);
+        this.voiceFilterEcho = this.voiceFilterEcho.bind(this);
         
     }
 
@@ -238,33 +238,17 @@ class App extends Component {
         }
     }
 
-    videoFilter() {
+    voiceFilterEcho() {
         const me = this.state.publisher;
         if (!this.state.echo) {
             this.state.echo = true;
-            me.stream.applyFilter("GStreamerFilter", { command: "audioecho delay=75000000 intensity=0.8 feedback=0.8" });
+            me.stream.applyFilter("GStreamerFilter", { command: "audioecho delay=40000000 intensity=0.7 feedback=0.4" });
             console.log("에코 추가");
         } else {
             this.state.echo = false;
             me.stream.removeFilter()
             console.log("에코 제거");
         }
-
-    //     me.stream.applyFilter("GStreamerFilter", { command: "videoflip method=vertical-flip" })
-    // .then(() => {
-    //     console.log("Video rotated!");
-    // })
-    // .catch(error => {
-    //     console.error(error);
-    // });
-                
-    // me.stream.removeFilter()
-    // .then(() => {
-    //     console.log("Filter removed");
-    // })
-    // .catch(error => {
-    //     console.error(error);
-    // });
     }
 
 
@@ -343,7 +327,7 @@ class App extends Component {
                             <button type='text' defaultValue={'유튜브'} onClick={this.sendYTUrl}>유튭</button>
                             <button type='text' defaultValue={'마이크'} onClick={this.audioMute}>마이크</button>
                             <button type='text' defaultValue={'캠'} onClick={this.videoMute}>캠</button>
-                            <button type='text' defaultValue={'필터 적용'} onClick={this.videoFilter}>필터적용</button>
+                            <button type='text' defaultValue={'필터 적용'} onClick={this.voiceFilterEcho}>필터적용</button>
                         </div>
                         {/*mainStreamManager(화면에 크게 뜨는 애 지워버림) */}
                         {/* {this.state.mainStreamManager !== undefined ? (
