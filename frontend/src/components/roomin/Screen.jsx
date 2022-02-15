@@ -1,6 +1,6 @@
 import styles from "./Room.module.css";
 import ReactPlayer from "react-player";
-import { useState } from "react";
+import ScoreSound from "./audio/Score.mp3";
 
 
 
@@ -11,6 +11,19 @@ function Screen ({mode, now}){
         // nextMusic()
     }
 
+    const audio = new Audio(ScoreSound)
+    function Score(){
+      audio.volume = 0.2
+      audio.play()
+    }
+
+    function closeScoreBoard(){
+        setTimeout(function () {
+            setstartScoreBoard(false);
+          }, 9000);
+    }
+
+
     return (
         <div>
             <ReactPlayer 
@@ -19,7 +32,12 @@ function Screen ({mode, now}){
             playing={true}
             muted={false}
             controls={true}
-            onEnded={() => {endMusic()}}
+            onEnded={() => {
+            endMusic();
+            setstartScoreBoard(true);
+            Score();
+            closeScoreBoard();
+            }}
             />
     {/* <button onClick={sendYTUrl}>연습버튼</button> */}
         </div>

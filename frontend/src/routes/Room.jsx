@@ -6,6 +6,7 @@ import Button from "../components/roomin/Button";
 import MirrorBall from "../components/roomin/MirrorBall";
 import LightRope from "../components/roomin/LightRope";
 import ChangeMode from "../components/roomin/ChangeMode";
+import Contents from "../components/roomin/Contents";
 import { useState } from "react";
 import Crazylights from "../components/roomin/Crazylights";
 import { Link, useParams } from "react-router-dom";
@@ -16,6 +17,9 @@ import Firework from "../components/remote/Firework";
 import UserVideoComponent from "../components/openvidu/UserVideoComponent";
 import { OpenVidu } from 'openvidu-browser';
 import axios from 'axios';
+import Dream from "../components/roomin/Dream";
+import GoodDay from "../components/roomin/GoodDay";
+import ScoreBoard from "../components/roomin/ScoreBoard";
 
 const OPENVIDU_SERVER_URL = 'https://i6a306.p.ssafy.io';
 const OPENVIDU_SERVER_SECRET = 'qwer1234';
@@ -26,6 +30,7 @@ const URL_PREFIX = 'https://www.youtube.com/watch?v=';
 
 function Room({ state }) {
     const [openChangeMode, setOpenChangeMode] = useState(false);
+    const [openContents, setOpenContents] = useState(false);
     const [openFirework, setOpenFirework] =useState(false);
     // const practice = [
     //   "Xk7_eEx58ds",
@@ -45,6 +50,9 @@ function Room({ state }) {
     const [ transChatBox, settransChatBox] = useState(styles.BasicChatBox);
     const [ transChat, settransChat] = useState(styles.BasicChat);
     const [ nowMode, setnowMode] = useState('Basicmode');
+    const [ startDream, setstartDream] = useState(false);
+    const [ startGoodDay, setstartGoodDay] = useState(false);
+    const [ startScoreBoard, setstartScoreBoard] = useState(false);
 
     // const [ myUserName, setmyUserName] = useState({ Nickname }.Nickname);//Nickname으로 쓰임
     const [ session, setsession] = useState(undefined);
@@ -499,9 +507,18 @@ function voiceFilterModulation() {
       <Screen
         mode={transScreen}
         now={nowPlaymusic}
+<<<<<<< frontend/src/routes/Room.jsx
         // nextMusic={nextMusic}
+=======
+        nextMusic={nextMusic}
+        setstartScoreBoard={setstartScoreBoard}
+>>>>>>> frontend/src/routes/Room.jsx
       />
       {openFirework && <Firework/>}
+      {startDream && <Dream setstartDream={setstartDream}/>}
+      {startGoodDay && <GoodDay setstartGoodDay={setstartGoodDay}/>}
+      {startScoreBoard && <ScoreBoard setstartScoreBoard={setstartScoreBoard} />}
+      
       <div className={transCamBox}>
         <div id="video-container">
           {session !== undefined ? (
@@ -534,6 +551,7 @@ function voiceFilterModulation() {
         {nowMode === 'Solomode' && <Button text={"Singer"} getOnClick={solosinger} />}
         {nowMode === 'Duetmode' && <Button text={"Singer1"} getOnClick={duetsinger} />}
         {nowMode === 'Duetmode' && <Button text={"Singer2"} getOnClick={duetsinger2} />}
+<<<<<<< frontend/src/routes/Room.jsx
         <Controller sendYTUrl={sendYTUrl} 
                     setOpenFirework={setOpenFirework} nowplaying={nowplaying} 
                     voiceFilterEcho={voiceFilterEcho} voiceFilterMegaPhone={voiceFilterMegaPhone} voiceFilterModulation={voiceFilterModulation }/>
@@ -542,6 +560,27 @@ function voiceFilterModulation() {
         <Button text={"확성기"} getOnClick={voiceFilterMegaPhone} />
         <Button text={"음성변조"} getOnClick={voiceFilterModulation} />
 
+=======
+        
+        
+        <Controller book={bookList} sendYTUrl={sendYTUrl} setOpenFirework={setOpenFirework}
+        setstartDream={setstartDream} setstartGoodDay={setstartGoodDay}/>
+        <button
+          className={(styles.btn, styles.neon)}
+          onClick={() => {
+            setOpenContents(true);
+          }}
+        >
+          {" "}
+          컨텐츠{" "}
+        </button>
+        {openContents && <Contents
+        closeContents={setOpenContents}
+        transformDuet={transformDuet}
+        setstartDream={setstartDream}
+        setstartGoodDay={setstartGoodDay}
+        />}
+>>>>>>> frontend/src/routes/Room.jsx
         <button
           className={(styles.btn, styles.neon)}
           onClick={() => {
